@@ -1,5 +1,7 @@
-import defs as client
+from defs import Client
 import time
+
+client = Client()
 
 while True:
 

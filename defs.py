@@ -74,55 +74,55 @@ class Message:
             handler.write(r2.content)
 
 
-# get all unread messages
+class Client:
 
-def get_unread_messages():
-    response = []
-    messages = twilio_client.messages.list(
-        to=credentials.twilio_get_number(),
-        limit=20
-    )
-    for message in messages:
-        if message.body != "***":
-            msg = Message()
-            msg.content = message.body
-            msg.number = message.from_
-            msg.sid = message.sid
+    def get_unread_messages(self):
+        response = []
+        messages = twilio_client.messages.list(
+            to=credentials.twilio_get_number(),
+            limit=20
+        )
+        for message in messages:
+            if message.body != "***":
+                msg = Message()
+                msg.content = message.body
+                msg.number = message.from_
+                msg.sid = message.sid
 
-            msg.beta_uri = message.uri
-            if message.num_media != "0":
-                msg.message_type = "mms"
+                msg.beta_uri = message.uri
+                if message.num_media != "0":
+                    msg.message_type = "mms"
+                else:
+                    msg.message_type = "sms"
+
+                response.append(msg)
             else:
-                msg.message_type = "sms"
-
-            response.append(msg)
-        else:
-            mark_as_read(message.sid)
-    return response
+                self.mark_as_read(message.sid)
+        return response
 
 
-def send_sms(content, to):
-    twilio_client.messages \
-        .create(
-            body=content,
-            from_=credentials.twilio_get_number(),
-            to=to
-        )
+    def send_sms(self, content, to):
+        twilio_client.messages \
+            .create(
+                body=content,
+                from_=credentials.twilio_get_number(),
+                to=to
+            )
 
 
-def send_mms(content, to, url):
-    twilio_client.messages \
-        .create(
-            body=content,
-            from_=credentials.twilio_get_number(),
-            media_url=[url],
-            to=to
-        )
+    def send_mms(self, content, to, url):
+        twilio_client.messages \
+            .create(
+                body=content,
+                from_=credentials.twilio_get_number(),
+                media_url=[url],
+                to=to
+            )
 
 
-def mark_as_read(sid):
-    try:
-        twilio_client.messages(sid).delete()
-    except TwilioRestException:
-        twilio_client.messages(sid) \
-            .update(body="***")
+    def mark_as_read(self, sid):
+        try:
+            twilio_client.messages(sid).delete()
+        except TwilioRestException:
+            twilio_client.messages(sid) \
+                .update(body="***")
