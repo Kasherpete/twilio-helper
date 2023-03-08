@@ -11,13 +11,14 @@ client = Client(account_sid, auth_token)
 
 
 class Message:
-    message_type = "sms"
+    message_type = ""
     content = ""
     sid = ""
     number = ""
 
     MMS_num_media = 0
-    MMS_content_type = ""
+    MMS_mime_type = ""
+    MMS_extension = ""
 
     # respond with sms
 
@@ -69,6 +70,8 @@ def get_unread_messages():
             msg.MMS_num_media = message.num_media
             if message.num_media != "0":
                 msg.message_type = "mms"
+            else:
+                msg.message_type = "sms"
 
             response.append(msg)
         else:
