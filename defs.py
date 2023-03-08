@@ -1,22 +1,26 @@
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
 import credentials
-import requests, json, mimetypes
+import requests
+import json
+import mimetypes
 
+# create base twilio client
 
-twilio_client = Client(credentials.get_sid(), credentials.get_auth())
+twilio_client = Client(credentials.twilio_get_sid(), credentials.twilio_get_auth())
 
 
 # main message class
 
 
 class Message:
-    message_type = ""
-    content = ""
-    sid = ""
-    number = ""
 
+    message_type = ""  # sms or mms
+    content = ""  # message body
+    sid = ""  # ID of message
+    number = ""  # number of who sent message
 
+    # this is for internal use only
     beta_uri = ""
 
     # respond with sms
@@ -25,22 +29,22 @@ class Message:
 
         twilio_client.messages \
             .create(
-            body=content,
-            from_=credentials.get_number(),
-            to=self.number
+                body=content,
+                from_=credentials.twilio_get_number(),
+                to=self.number
 
-        )
+            )
 
     # respond with mms
 
-    def send_mms(self, content, URL):
+    def send_mms(self, content, url):
         twilio_client.messages \
             .create(
-            body=content,
-            from_=credentials.get_number(),
-            media_url=[URL],
-            to=self.number
-        )
+                body=content,
+                from_=credentials.twilio_get_number(),
+                media_url=[url],
+                to=self.number
+            )
 
     # delete message
 
@@ -51,11 +55,13 @@ class Message:
             twilio_client.messages(self.sid) \
                 .update(body="***")
 
+    # download message
+
     def mv(self, file_path):
 
         string1 = f"https://api.twilio.com{self.beta_uri}"
         string1 = f"{string1[:-5]}/Media{string1[-5:]}"
-        r = requests.get(string1, auth=(credentials.get_sid(), credentials.get_auth()))
+        r = requests.get(string1, auth=(credentials.twilio_get_sid(), credentials.twilio_get_auth()))
         r = json.loads(r.text)
         r = r["media_list"][0]
         sid = r["sid"]
@@ -68,12 +74,12 @@ class Message:
             handler.write(r2.content)
 
 
-# get all undeleted messages
+# get all unread messages
 
 def get_unread_messages():
     response = []
     messages = twilio_client.messages.list(
-        to=credentials.get_number(),
+        to=credentials.twilio_get_number(),
         limit=20
     )
     for message in messages:
@@ -98,20 +104,20 @@ def get_unread_messages():
 def send_sms(content, to):
     twilio_client.messages \
         .create(
-        body=content,
-        from_=credentials.get_number(),
-        to=to
-    )
+            body=content,
+            from_=credentials.twilio_get_number(),
+            to=to
+        )
 
 
-def send_mms(content, to, URL):
+def send_mms(content, to, url):
     twilio_client.messages \
         .create(
-        body=content,
-        from_=credentials.get_number(),
-        media_url=[URL],
-        to=to
-    )
+            body=content,
+            from_=credentials.twilio_get_number(),
+            media_url=[url],
+            to=to
+        )
 
 
 def mark_as_read(sid):

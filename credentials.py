@@ -1,9 +1,10 @@
-def get_number():
-    return ""
-
-def get_sid():
+def twilio_get_number():
     return ""
 
 
-def get_auth():
+def twilio_get_sid():
+    return ""
+
+
+def twilio_get_auth():
     return ""
