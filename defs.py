@@ -1,10 +1,10 @@
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
-import cred
+import credentials
+import requests, json, mimetypes
 
-account_sid = ""
-auth_token = ""
-client = Client(account_sid, auth_token)
+
+twilio_client = Client(credentials.get_sid(), credentials.get_auth())
 
 
 # main message class
@@ -16,18 +16,17 @@ class Message:
     sid = ""
     number = ""
 
-    MMS_num_media = 0
-    MMS_mime_type = ""
-    MMS_extension = ""
+
+    beta_uri = ""
 
     # respond with sms
 
     def send_sms(self, content):
 
-        client.messages \
+        twilio_client.messages \
             .create(
             body=content,
-            from_=cred.get_number(),
+            from_=credentials.get_number(),
             to=self.number
 
         )
@@ -35,10 +34,10 @@ class Message:
     # respond with mms
 
     def send_mms(self, content, URL):
-        client.messages \
+        twilio_client.messages \
             .create(
             body=content,
-            from_=cred.get_number(),
+            from_=credentials.get_number(),
             media_url=[URL],
             to=self.number
         )
@@ -47,18 +46,34 @@ class Message:
 
     def mark_as_read(self):
         try:
-            client.messages(self.sid).delete()
+            twilio_client.messages(self.sid).delete()
         except TwilioRestException:
-            client.messages(self.sid) \
+            twilio_client.messages(self.sid) \
                 .update(body="***")
+
+    def mv(self, file_path):
+
+        string1 = f"https://api.twilio.com{self.beta_uri}"
+        string1 = f"{string1[:-5]}/Media{string1[-5:]}"
+        r = requests.get(string1, auth=(credentials.get_sid(), credentials.get_auth()))
+        r = json.loads(r.text)
+        r = r["media_list"][0]
+        sid = r["sid"]
+        mime_type = r["content_type"]
+        print(r["content_type"])
+        media_url = f"{string1[:-5]}/{sid}"
+        r2 = requests.get(media_url)
+
+        with open(f'{file_path}{mimetypes.guess_extension(mime_type, strict=True)}', 'wb') as handler:
+            handler.write(r2.content)
 
 
 # get all undeleted messages
 
 def get_unread_messages():
     response = []
-    messages = client.messages.list(
-        to=cred.get_number(),
+    messages = twilio_client.messages.list(
+        to=credentials.get_number(),
         limit=20
     )
     for message in messages:
@@ -67,7 +82,8 @@ def get_unread_messages():
             msg.content = message.body
             msg.number = message.from_
             msg.sid = message.sid
-            msg.MMS_num_media = message.num_media
+
+            msg.beta_uri = message.uri
             if message.num_media != "0":
                 msg.message_type = "mms"
             else:
@@ -80,19 +96,19 @@ def get_unread_messages():
 
 
 def send_sms(content, to):
-    client.messages \
+    twilio_client.messages \
         .create(
         body=content,
-        from_=cred.get_number(),
+        from_=credentials.get_number(),
         to=to
     )
 
 
 def send_mms(content, to, URL):
-    client.messages \
+    twilio_client.messages \
         .create(
         body=content,
-        from_=cred.get_number(),
+        from_=credentials.get_number(),
         media_url=[URL],
         to=to
     )
@@ -100,7 +116,7 @@ def send_mms(content, to, URL):
 
 def mark_as_read(sid):
     try:
-        client.messages(sid).delete()
+        twilio_client.messages(sid).delete()
     except TwilioRestException:
-        client.messages(sid) \
+        twilio_client.messages(sid) \
             .update(body="***")
