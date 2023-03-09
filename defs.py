@@ -104,11 +104,11 @@ class Client:
         self.sid = sid
         self.auth = auth
 
-    def get_unread_messages(self):
+    def get_unread_messages(self, list_count=20):
         response = []
         messages = twilio_client.messages.list(
             to=self.number,
-            limit=20
+            limit=list_count
         )
         for message in messages:
             if message.sid not in dummy_list:
@@ -157,3 +157,7 @@ class Client:
             if sid not in dummy_list:
                 dummy_list.append(sid)
 
+    def mark_all_read(self):
+        messages = self.get_unread_messages()
+        for message in messages:
+            message.mark_as_read()

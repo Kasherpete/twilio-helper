@@ -16,7 +16,10 @@ Client methods:
     client.send_mms("Hellow World!", number, url_of_media)
 
     # returns a list of class Messages (see below)
-    client.get_unread_messages()
+    # list_number is an optional parameter to set how far back to retreive messages
+    client.get_unread_messages(optional_list_number)
+
+    client.mark_all_read()  # marks ALL unread messages as read
 
 Message Class, properties, usages:
 
