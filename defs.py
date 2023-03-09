@@ -9,6 +9,8 @@ import mimetypes
 
 twilio_client = Client(credentials.twilio_get_sid(), credentials.twilio_get_auth())
 
+dummy_list = []
+
 
 # main message class
 
@@ -26,7 +28,6 @@ class Message:
     # respond with sms
 
     def send_sms(self, content):
-
         twilio_client.messages \
             .create(
                 body=content,
@@ -49,15 +50,19 @@ class Message:
     # delete message
 
     def mark_as_read(self):
+
         try:
             twilio_client.messages(self.sid).delete()
         except TwilioRestException:
-            twilio_client.messages(self.sid) \
-                .update(body="***")
+
+            if self.sid not in dummy_list:
+                dummy_list.append(self.sid)
+
+            # twilio_client.messages(self.sid).update(body="")
 
     # download message
 
-    def mv(self, file_path):
+    def MMS_mv(self, file_name):
 
         string1 = f"https://api.twilio.com{self.beta_uri}"
         string1 = f"{string1[:-5]}/Media{string1[-5:]}"
@@ -66,24 +71,47 @@ class Message:
         r = r["media_list"][0]
         sid = r["sid"]
         mime_type = r["content_type"]
-        print(r["content_type"])
+        # print(r["content_type"])
         media_url = f"{string1[:-5]}/{sid}"
         r2 = requests.get(media_url)
 
-        with open(f'{file_path}{mimetypes.guess_extension(mime_type, strict=True)}', 'wb') as handler:
+        with open(f'{file_name}{mimetypes.guess_extension(mime_type, strict=True)}', 'wb') as handler:
             handler.write(r2.content)
+
+    def MMS_raw_data(self):
+        string1 = f"https://api.twilio.com{self.beta_uri}"
+        string1 = f"{string1[:-5]}/Media{string1[-5:]}"
+        r = requests.get(string1, auth=(credentials.twilio_get_sid(), credentials.twilio_get_auth()))
+        r = json.loads(r.text)
+        r = r["media_list"][0]
+        sid = r["sid"]
+        mime_type = r["content_type"]
+
+        media_url = f"{string1[:-5]}/{sid}"
+        r2 = requests.get(media_url)
+
+        return r2.content, mime_type
+
 
 
 class Client:
+    number = ""
+    sid = ""
+    auth = ""
+
+    def __init__(self, number, sid, auth):
+        self.number = number
+        self.sid = sid
+        self.auth = auth
 
     def get_unread_messages(self):
         response = []
         messages = twilio_client.messages.list(
-            to=credentials.twilio_get_number(),
+            to=self.number,
             limit=20
         )
         for message in messages:
-            if message.body != "***":
+            if message.sid not in dummy_list:
                 msg = Message()
                 msg.content = message.body
                 msg.number = message.from_
@@ -97,6 +125,7 @@ class Client:
 
                 response.append(msg)
             else:
+                dummy_list.remove(message.sid)
                 self.mark_as_read(message.sid)
         return response
 
@@ -105,7 +134,7 @@ class Client:
         twilio_client.messages \
             .create(
                 body=content,
-                from_=credentials.twilio_get_number(),
+                from_=self.number,
                 to=to
             )
 
@@ -114,7 +143,7 @@ class Client:
         twilio_client.messages \
             .create(
                 body=content,
-                from_=credentials.twilio_get_number(),
+                from_=self.number,
                 media_url=[url],
                 to=to
             )
@@ -124,5 +153,7 @@ class Client:
         try:
             twilio_client.messages(sid).delete()
         except TwilioRestException:
-            twilio_client.messages(sid) \
-                .update(body="***")
+
+            if sid not in dummy_list:
+                dummy_list.append(sid)
+

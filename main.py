@@ -1,21 +1,23 @@
+import credentials
 from defs import Client
 import time
 
-client = Client()
+client = Client(credentials.twilio_get_number(), credentials.twilio_get_sid(), credentials.twilio_get_auth())
+start = 0
 
 while True:
 
     # get list of unread messages
 
     messages = client.get_unread_messages()
-    print("check")
 
     # for each message in messages
 
     for message in messages:
 
         # prints sms or mms
-        print(message.message_type)
+        client.send_sms("hello", message.number)
+        client.mark_as_read(message.sid)
 
     # change this number for more frequent checks
-    time.sleep(.3)
+    time.sleep(.5)
