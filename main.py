@@ -3,7 +3,7 @@ from defs import Client
 import time
 
 client = Client(credentials.twilio_get_number(), credentials.twilio_get_sid(), credentials.twilio_get_auth())
-start = 0
+
 
 while True:
 
@@ -16,8 +16,7 @@ while True:
     for message in messages:
 
         # prints sms or mms
-        client.send_sms("hello", message.number)
-        client.mark_as_read(message.sid)
+        message.send_sms("hello world!")
 
     # change this number for more frequent checks
     time.sleep(.5)
