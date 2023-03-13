@@ -5,12 +5,12 @@ import requests
 import json
 import mimetypes
 
-# create base twilio client
+# create base twilio client. Put in your own credentials
 
 twilio_client = Client(credentials.twilio_get_sid(), credentials.twilio_get_auth())
 
-dummy_list = []
 
+dummy_list = []  # DO NOT REMOVE
 
 # main message class
 
@@ -21,6 +21,10 @@ class Message:
     content = ""  # message body
     sid = ""  # ID of message
     number = ""  # number of who sent message
+    message_to = ""  # number of whom the msg was sent to
+    account_auth = ""  # auth key of account
+    account_sid = ""  # sid key of account
+
 
     # this is for internal use only
     beta_uri = ""
@@ -31,7 +35,7 @@ class Message:
         twilio_client.messages \
             .create(
                 body=content,
-                from_=credentials.twilio_get_number(),
+                from_=self.message_to,
                 to=self.number
 
             )
@@ -42,7 +46,7 @@ class Message:
         twilio_client.messages \
             .create(
                 body=content,
-                from_=credentials.twilio_get_number(),
+                from_=self.message_to,
                 media_url=[url],
                 to=self.number
             )
@@ -66,7 +70,7 @@ class Message:
 
         string1 = f"https://api.twilio.com{self.beta_uri}"
         string1 = f"{string1[:-5]}/Media{string1[-5:]}"
-        r = requests.get(string1, auth=(credentials.twilio_get_sid(), credentials.twilio_get_auth()))
+        r = requests.get(string1, auth=(self.account_sid, self.account_auth))
         r = json.loads(r.text)
         r = r["media_list"][0]
         sid = r["sid"]
@@ -81,7 +85,7 @@ class Message:
     def MMS_raw_data(self):
         string1 = f"https://api.twilio.com{self.beta_uri}"
         string1 = f"{string1[:-5]}/Media{string1[-5:]}"
-        r = requests.get(string1, auth=(credentials.twilio_get_sid(), credentials.twilio_get_auth()))
+        r = requests.get(string1, auth=(self.account_sid, self.account_auth))
         r = json.loads(r.text)
         r = r["media_list"][0]
         sid = r["sid"]
@@ -116,6 +120,9 @@ class Client:
                 msg.content = message.body
                 msg.number = message.from_
                 msg.sid = message.sid
+                msg.message_to = message.to
+                msg.account_auth = self.auth
+                msg.account_sid = self.sid
 
                 msg.beta_uri = message.uri
                 if message.num_media != "0":

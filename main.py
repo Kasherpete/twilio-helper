@@ -13,10 +13,23 @@ while True:
 
     # for each message in messages
 
-    for message in messages:
+    for msg in messages:
 
-        # prints sms or mms
-        message.send_sms("hello world!")
+        # all properties of Message class
 
-    # change this number for more frequent checks
+        msg.send_sms(msg.content)
+        print(msg.sid)
+        print(msg.account_sid)
+        print(msg.account_auth)
+        print(msg.message_to)
+        print(msg.content)
+        print(msg.number)
+        print(msg.message_type)
+
+        # mark as read
+
+        msg.mark_as_read()
+
+
+    # change this number for more frequent checks. I recommend this value for stability
     time.sleep(.5)
