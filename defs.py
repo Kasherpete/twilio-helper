@@ -1,4 +1,4 @@
-from twilio.rest import Client
+import twilio.rest
 from twilio.base.exceptions import TwilioRestException
 import credentials
 import requests
@@ -7,7 +7,7 @@ import mimetypes
 
 # create base twilio client. Put in your own credentials
 
-twilio_client = Client(credentials.twilio_get_sid(), credentials.twilio_get_auth())
+twilio_client = twilio.rest.Client(credentials.twilio_get_sid(), credentials.twilio_get_auth())
 
 
 dummy_list = []  # DO NOT REMOVE
