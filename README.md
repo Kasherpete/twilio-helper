@@ -48,6 +48,17 @@ client.mark_all_read()
 client.mark_as_read("message_sid")
 
 
+# asks user a question and returns response. if not answered within
+# timeout time, default is returned.
+user_response = client.ask("Enter prompt,", message_object, timeout=60, default="Hello", advanced=False)
+
+
+# same as above, but with async
+user_response = await client.ask("Enter prompt,", message_object, timeout=60, default="Hello", advanced=False)
+
+# setting advanced to True will return message object instead of string. useful for advanced projects
+# examples below
+
 # properties
 
 
