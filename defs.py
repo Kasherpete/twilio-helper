@@ -1,9 +1,12 @@
+import asyncio
+
 import twilio.rest
 from twilio.base.exceptions import TwilioRestException
 import credentials
 import requests
 import json
 import mimetypes
+import time
 
 # create base twilio client. Put in your own credentials
 
@@ -168,3 +171,60 @@ class Client:
         messages = self.get_unread_messages()
         for message in messages:
             message.mark_as_read()
+
+
+    async def async_ask(self, question, msg, timeout=60, default="", advanced=False):
+        timer_timeout = time.perf_counter()
+        msg.send_sms(question)
+
+        while time.perf_counter() - timer_timeout <= timeout:
+            await asyncio.sleep(1)
+            new_messages = self.get_unread_messages(
+                6)  # idk why I make it this number, it seems best for high capacity
+
+            for message in new_messages:
+
+                if message.number == msg.number:
+                    message.mark_as_read()
+                    if advanced:
+                        return message
+                    else:
+                        return message.content
+
+        # timeout error messages
+
+        await asyncio.sleep(1)
+        if default != "":
+            msg.send_sms(f'ERROR:TIMEOUT. User took too long to respond. Default response: {default}.')
+        else:
+            msg.send_sms("ERROR:TIMEOUT. User took too long to respond. Please use command again to retry.")
+
+        return default
+
+    def ask(self, question, msg, timeout=60, default="", advanced=False):
+        timer_timeout = time.perf_counter()
+        msg.send_sms(question)
+
+        while time.perf_counter() - timer_timeout <= timeout:
+            time.sleep(1)
+            new_messages = self.get_unread_messages(
+                6)  # idk why I make it this number, it seems best for high capacity
+
+            for message in new_messages:
+
+                if message.number == msg.number:
+                    message.mark_as_read()
+                    if advanced:
+                        return message
+                    else:
+                        return message.content
+
+        # timeout error messages
+
+        time.sleep(1)
+        if default != "":
+            msg.send_sms(f'ERROR:TIMEOUT. User took too long to respond. Default response: {default}.')
+        else:
+            msg.send_sms("ERROR:TIMEOUT. User took too long to respond. Please use command again to retry.")
+
+        return default
