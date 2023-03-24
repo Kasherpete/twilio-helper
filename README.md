@@ -101,6 +101,10 @@ for msg in messages:
 
     msg.mark_as_read()  # mark message as read
 
+    # these are the same as above, except you don't need to enter message object
+    user_response = msg.ask("Enter prompt")
+    user_response = await msg.ask("Enter prompt")
+
 
 
     # these are only for MMS messages
