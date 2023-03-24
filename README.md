@@ -138,7 +138,7 @@ def twilio_get_auth():
     return auth_token
 ```
 
-# Running Program:
+# Example Program:
 A sample program is supplied in main.py. You can also use this code to help you get started:
 ```python
 from defs import Client
@@ -159,5 +159,37 @@ for msg in messages:
         
         elif msg.content == "!test":
             msg.send_sms("Program is running.")
+        
+```
+# Example msg.ask() Program:
+The following code shows you how to make a program using message.ask().
+```python
+from defs import Client
+
+client = Client("number", "sid", "auth")
+
+messages = client.get_unread_messages()
+for msg in messages:
+    # if messages starts with !
+    if msg.content[0] == "!":
+        
+        # if message is !help
+        
+        if msg.content == "!help":
+            msg.send_sms("Current commands: !help, !test")
+            
+        # if message is !test
+        
+        elif msg.content == "!test":
+            user_response = msg.ask("Respond with 1 or 2.")
+            
+            if user_response == "1":
+                msg.send_sms("Apple")
+                
+            elif user_response == "2":
+                msg.send_sms("Banana")
+                
+            else:
+                msg.send_sms("Invalid number!")
         
 ```
