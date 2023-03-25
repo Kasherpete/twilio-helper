@@ -17,7 +17,7 @@ twilio_client = twilio.rest.Client("twilio_sid", "twilio_auth")
 ```
 After these two things are done, you are pretty much ready to start using and modifying the code.
 # Usage
-### Client methods, Properties, and Usages:
+### <u>Client</u> methods, Properties, and Usages:
 
 ```python
 from defs import Client
@@ -69,7 +69,7 @@ print(client.sid)  # client assigned account sid
 print(client.auth)  # client assigned auth token
 ```
 
-### Message Class, Properties, and Usages:
+### <u>Message</u> Class, Properties, and Usages:
 ```python
 from defs import Client
 
