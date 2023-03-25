@@ -227,8 +227,8 @@ class Client:
             if sid not in dummy_list:
                 dummy_list.append(sid)
 
-    def mark_all_read(self):
-        messages = self.get_unread_messages()
+    def mark_all_read(self, number=200):
+        messages = self.get_unread_messages(number)
         for message in messages:
             message.mark_as_read()
 

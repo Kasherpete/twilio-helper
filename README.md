@@ -43,7 +43,7 @@ client.get_unread_messages("optional number")
 
 
 # marks all unread messages as read
-client.mark_all_read()
+client.mark_all_read()  # you can specify how far back to go if you want, see below
 
 
 # marks a message as read. message_sid explained below
@@ -56,7 +56,7 @@ user_response = client.ask("Enter prompt,", message_object, timeout=60, default=
 
 
 # same as above, but with async
-user_response = await client.ask("Enter prompt,", message_object, timeout=60, default="Hello", advanced=False)
+user_response = await client.async_ask("Enter prompt,", message_object, timeout=60, default="Hello", advanced=False)
 
 # setting advanced to True will return message object instead of string. useful for advanced projects
 # examples below
@@ -70,12 +70,23 @@ print(client.sid)  # client assigned account sid
 
 print(client.auth)  # client assigned auth token
 ```
-### Properties of Message Class:
+### Properties of Client Class:
 | syntax           | Description                                          | Type                                                                      |
 |------------------|------------------------------------------------------|---------------------------------------------------------------------------|
 | client.number    | The number assigned to the client                    | string  ([E.164 format](https://www.twilio.com/docs/glossary/what-e164))  |
 | client.sid       | The sid key assigned to the client                   | string                                                                    |
 | client.auth      | The auth token assigned to the client                | string                                                                    |
+### Methods of Client Class:
+| syntax                       | Description                                                    | # of args                    | Returns                                              | Details      |
+|------------------------------|----------------------------------------------------------------|------------------------------|------------------------------------------------------|--------------|
+| INITIALIZATION               | Creates initial Client object                                  | 3                            | Client object                                        |              |
+| client.send_sms()            | Sends sms                                                      | 2                            | None                                                 |              |
+| client.send_sms()            | Sends mms                                                      | 3                            | None                                                 |              |
+| client.get_unread_messages() | Gets all unread messages                                       | 1 (optional, default is 20)  | list (contains message objects)                      |              |
+| client.mark_all_read()       | Marks all messages as read                                     | 1 (optional, default is 200) | None                                                 |              |
+| client.mark_as_read()        | Marks message as read                                          | 1                            | None                                                 |              |
+| client.ask()                 | Send sms to number specified in message obj, returns response  | 5 (3 optional)               | string if advanced == False, Message object if True  |              |
+| client.async_ask()           | Send sms to number specified in message obj, returns response  | 5 (3 optional)               | string if advanced == False, Message object if True  | Asynchronous |
 
 
 
