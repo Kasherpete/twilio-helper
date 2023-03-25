@@ -70,6 +70,15 @@ print(client.sid)  # client assigned account sid
 
 print(client.auth)  # client assigned auth token
 ```
+### Properties of Message Class:
+| syntax           | Description                                          | Type                                                                      |
+|------------------|------------------------------------------------------|---------------------------------------------------------------------------|
+| client.number    | The number assigned to the client                    | string  ([E.164 format](https://www.twilio.com/docs/glossary/what-e164))  |
+| client.sid       | The sid key assigned to the client                   | string                                                                    |
+| client.auth      | The auth token assigned to the client                | string                                                                    |
+
+
+
 
 ### <u>Message</u> Class, Properties, and Usages:
 ```python
