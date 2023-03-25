@@ -130,6 +130,15 @@ for msg in messages:
 | msg.account_auth | The auth key of the client that handles the message  | string                                                                  |
 | msg.account_sid  | The sid token of the client that handles the message | string                                                                  |
 ### Methods of Message Class:
+| syntax              | Description                                         | # of args                   | Returns                                                                                                               | Details      |
+|---------------------|-----------------------------------------------------|-----------------------------|-----------------------------------------------------------------------------------------------------------------------|--------------|
+| msg.send_sms()      | Sends sms to the number that sent message           | 1                           | None                                                                                                                  |              |
+| msg.send_mms()      | Sends mms to the number that sent message           | 2                           | None                                                                                                                  |              |
+| msg.mark_as_read()  | Marks message as read                               | None                        | None                                                                                                                  |              |
+| msg.ask()           | Send a question to number that sent message         | 4 (3 of which are optional) | string if advanced == False, Message object if True                                                                   |              |
+| msg.async_ask()     | Send a question to number that sent message (async) | 4 (3 of which are optional) | string if advanced == False, Message object if True                                                                   | Asynchronous |
+| msg.MMS_mv()        | Downloads file to file path                         | 1                           | None                                                                                                                  | Only for MMS |
+| msg.MMS_raw_data()  | Returns raw data of file                            | None                        | list (contains [MIME-type](https://webplatform.github.io/docs/concepts/Internet_and_Web/mime_types/) followed by data |              |
  
 # Setting Up Credentials:
 
