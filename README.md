@@ -8,7 +8,9 @@ from defs import Client
 client = Client("your_number", "account_sid", "auth_token")
 
 ```
-**_You also need to update the client used in defs.py_**:
+**_You also need to update the client used in defs.py_**. This is the client used when using any methods in the Message
+class. If your program uses multiple clients, it is inadvisable to use the message class, because it only uses the
+client defined here. For most use cases, this will not be a problem.
 ```python
 import twilio.rest
 
@@ -116,6 +118,19 @@ for msg in messages:
     msg.MMS_raw_data()
 ```
 
+
+### Properties of Message Class:
+| syntax           | Description                                          | Type                                                                    |
+|------------------|------------------------------------------------------|-------------------------------------------------------------------------|
+| msg.content      | The content of the message                           | string                                                                  |
+| msg.number       | Number that sent the message                         | string ([E.164 format](https://www.twilio.com/docs/glossary/what-e164)) |
+| msg.message_type | Returns either "sms" or "sms"                        | string                                                                  |
+| msg.sid          | The unique ID of the message                         | string                                                                  |
+| msg.message_to   | Who the message was sent to                          | string ([E.164 format](https://www.twilio.com/docs/glossary/what-e164)) |
+| msg.account_auth | The auth key of the client that handles the message  | string                                                                  |
+| msg.account_sid  | The sid token of the client that handles the message | string                                                                  |
+### Methods of Message Class:
+ 
 # Setting Up Credentials:
 
 You can either have the credentials hardcoded in, rely on environment variables, or use the following method. This
