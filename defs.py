@@ -12,14 +12,13 @@ import time
 
 twilio_client = twilio.rest.Client(credentials.twilio_get_sid(), credentials.twilio_get_auth())
 
-
 dummy_list = []  # DO NOT REMOVE
+
 
 # main message class
 
 
 class Message:
-
     message_type = ""  # sms or mms
     content = ""  # message body
     sid = ""  # ID of message
@@ -28,31 +27,36 @@ class Message:
     account_auth = ""  # auth key of account
     account_sid = ""  # sid key of account
 
-
     # this is for internal use only
     beta_uri = ""
 
     # respond with sms
 
-    def send_sms(self, content):
-        twilio_client.messages \
-            .create(
-                body=content,
-                from_=self.message_to,
-                to=self.number
+    def send_sms(self, content: str):
+        twilio_client.messages.create(
+            body=content,
+            from_=self.message_to,
+            to=self.number
 
-            )
+        )
 
     # respond with mms
 
-    def send_mms(self, content, url):
-        twilio_client.messages \
-            .create(
-                body=content,
-                from_=self.message_to,
-                media_url=[url],
-                to=self.number
-            )
+    def send_mms(self, content: str, path: str):
+        twilio_client.messages.create(
+            body=content,
+            from_=self.message_to,
+            media_url=[path],
+            to=self.number
+        )
+
+    def send_multiple_mms(self, content: str, paths: list):
+        twilio_client.messages.create(
+            body=content,
+            from_=self.message_to,
+            media_url=paths,
+            to=self.number
+        )
 
     # delete message
 
@@ -69,7 +73,7 @@ class Message:
 
     # download message
 
-    def MMS_mv(self, file_name):
+    def MMS_mv(self, file_name: str):
 
         string1 = f"https://api.twilio.com{self.beta_uri}"
         string1 = f"{string1[:-5]}/Media{string1[-5:]}"
@@ -99,8 +103,7 @@ class Message:
 
         return r2.content, mime_type
 
-
-    def ask(self, question, timeout=60, default="", advanced=False):
+    def ask(self, question: str, timeout: int = 60, default: str = "", advanced: bool = False):
         client = Client(credentials.twilio_get_number(), credentials.twilio_get_sid(), credentials.twilio_get_auth())
         timer_timeout = time.perf_counter()
         self.send_sms(question)
@@ -129,8 +132,7 @@ class Message:
 
         return default
 
-
-    async def async_ask(self, question, timeout=60, default="", advanced=False):
+    async def async_ask(self, question: str, timeout: int = 60, default: str = "", advanced: bool = False):
         client = Client(credentials.twilio_get_number(), credentials.twilio_get_sid(), credentials.twilio_get_auth())
         timer_timeout = time.perf_counter()
         self.send_sms(question)
@@ -160,18 +162,17 @@ class Message:
         return default
 
 
-
 class Client:
     number = ""
     sid = ""
     auth = ""
 
-    def __init__(self, number, sid, auth):
+    def __init__(self, number: str, sid: str, auth: str):
         self.number = number
         self.sid = sid
         self.auth = auth
 
-    def get_unread_messages(self, list_count=20):
+    def get_unread_messages(self, list_count: int = 20):
         response = []
         messages = twilio_client.messages.list(
             to=self.number,
@@ -199,25 +200,28 @@ class Client:
                 self.mark_as_read(message.sid)
         return response
 
+    def send_sms(self, content: str, to: str):
+        twilio_client.messages.create(
+            body=content,
+            from_=self.number,
+            to=to
+        )
 
-    def send_sms(self, content, to):
-        twilio_client.messages \
-            .create(
-                body=content,
-                from_=self.number,
-                to=to
-            )
+    def send_mms(self, content: str, to: str, path: str):
+        twilio_client.messages.create(
+            body=content,
+            from_=self.number,
+            media_url=[path],
+            to=to
+        )
 
-
-    def send_mms(self, content, to, url):
-        twilio_client.messages \
-            .create(
-                body=content,
-                from_=self.number,
-                media_url=[url],
-                to=to
-            )
-
+    def send_multiple_mms(self, content: str, to: str, paths: list):
+        twilio_client.messages.create(
+            body=content,
+            from_=self.number,
+            media_url=paths,
+            to=to
+        )
 
     def mark_as_read(self, sid):
         try:
@@ -227,13 +231,13 @@ class Client:
             if sid not in dummy_list:
                 dummy_list.append(sid)
 
-    def mark_all_read(self, number=200):
+    def mark_all_read(self, number: int = 200):
         messages = self.get_unread_messages(number)
         for message in messages:
             message.mark_as_read()
 
-
-    async def async_ask(self, question, msg, timeout=60, default="", advanced=False):
+    async def async_ask(self, question: str, msg: Message, timeout: int = 60, default: str = "",
+                        advanced: bool = False):
         timer_timeout = time.perf_counter()
         msg.send_sms(question)
 
@@ -261,7 +265,7 @@ class Client:
 
         return default
 
-    def ask(self, question, msg, timeout=60, default="", advanced=False):
+    def ask(self, question: str, msg: Message, timeout: int = 60, default: str = "", advanced: bool = False):
         timer_timeout = time.perf_counter()
         msg.send_sms(question)
 

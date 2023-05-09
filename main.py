@@ -17,7 +17,7 @@ while True:
 
         # all properties of Message class
 
-        msg.send_sms(msg.content)
+        msg.send_sms(f"Hi, '{msg.number}'!")
         print(msg.sid)
         print(msg.account_sid)
         print(msg.account_auth)
@@ -28,7 +28,7 @@ while True:
 
         # mark as read
 
-        msg.mark_as_read()
+        msg.mark_as_read()  # pls remember this ;)
 
 
     # change this number for more frequent checks. I recommend this value for stability

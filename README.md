@@ -35,8 +35,8 @@ client = Client("number", "sid", "auth")  # details above
 client.send_sms("Hello World!", "+11234567890")  # send sms
 
 
-client.send_mms("Hello World!", "+11234567890", "media_url")  # send mms
-
+client.send_mms("Hello World!", "+11234567890", "media_url")  # send mms - media url can be website or local file
+client.send_multiple_mms("Hello World!", "+11234567890", ['/file/name', 'https://example.com'])  # up to 10
 
 # returns list of class Messages, details below
 client.get_unread_messages("optional number")
@@ -119,7 +119,8 @@ for msg in messages:
     
     # sends a sms or mms message to the number that sent the message
     msg.send_sms("Hello World!")
-    msg.send_mms("hello World!", "url_of_media")
+    msg.send_mms("hello World!", "url_of_media")  # local or webpage
+    msg.send_multiple_mms("Hello World!", ['/file/name', 'https://example.com'])  # up to 10
 
     msg.mark_as_read()  # mark message as read
 
