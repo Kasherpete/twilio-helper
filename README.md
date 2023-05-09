@@ -82,7 +82,7 @@ print(client.auth)  # client assigned auth token
 | INITIALIZATION               | Creates initial Client object                                  | 3                            | Client object                                        |              |
 | client.send_sms()            | Sends sms                                                      | 2                            | None                                                 |              |
 | client.send_sms()            | Sends mms                                                      | 3                            | None                                                 |              |
-| client.get_unread_messages() | Gets all unread messages                                       | 1 (optional, default is 20)  | list (contains message objects)                      |              |
+| client.get_unread_messages() | Gets all unread messages                                       | 1 (optional, default is 20)  | list (contains Message objects)                      |              |
 | client.mark_all_read()       | Marks all messages as read                                     | 1 (optional, default is 200) | None                                                 |              |
 | client.mark_as_read()        | Marks message as read                                          | 1                            | None                                                 |              |
 | client.ask()                 | Send sms to number specified in message obj, returns response  | 5 (3 optional)               | string if advanced == False, Message object if True  |              |
